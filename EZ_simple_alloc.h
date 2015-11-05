@@ -1,3 +1,6 @@
+#ifndef EZ_SIMPLE_ALLOC
+#define EZ_SIMPLE_ALLOC
+
 #include "EZ_default_alloc_template.h"
 #include "EZ_alloc.h"
 #include "EZ_construct.h"
@@ -42,3 +45,5 @@ public:
 		if (0 != n) Alloc::deallocate(p, sizeof(T));
 	}
 };
+
+#endif
