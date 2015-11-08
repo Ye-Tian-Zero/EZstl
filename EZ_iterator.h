@@ -46,7 +46,7 @@ struct iterator_traits < const T* > {
 template <class Iterator>
 inline typename iterator_traits<Iterator>::iterator_category iterator_category(const Iterator&)
 {
-	return (typename iterator_traits<Iterator>::iterator_category)();
+	return typename iterator_traits<Iterator>::iterator_category();
 }
 
 template<class Iterator>

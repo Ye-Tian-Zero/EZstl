@@ -32,7 +32,7 @@ public:
 
 	static pointer allocate(void)
 	{
-		return 0 == n ? 0 : (T*)Alloc::allocate(sizeof(T));
+		return (T*)Alloc::allocate(sizeof(T));
 	}
 
 	static void deallocate(T *p, size_t n)
@@ -42,7 +42,7 @@ public:
 
 	static void deallocate(T *p)
 	{
-		if (0 != n) Alloc::deallocate(p, sizeof(T));
+		Alloc::deallocate(p, sizeof(T));
 	}
 };
 

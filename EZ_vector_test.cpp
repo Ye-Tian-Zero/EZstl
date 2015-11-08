@@ -1,11 +1,13 @@
 //#define DEBUG
 #include"EZ_vector.h"
+#include<vector>
 #include <iostream>
 using std::cout;
 using std::endl;
 int main()
 {
-	vector<int> ivec;
+	std:: vector<int> ivec;
+	std::vector<int>::const_iterator citer = ivec.begin();
 	for (int i = 0; i != 10; ++i)
 	{
 		ivec.push_back(i);

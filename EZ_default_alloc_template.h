@@ -17,7 +17,8 @@ private:
 private:
 	union obj{
 		union obj* free_list_link;
-		char client_data[1];
+		//char client_data[1];
+		//is this necessary?
 	};
 private:
 	static obj* volatile free_list[__NFREELISTS];
@@ -122,7 +123,6 @@ void* __default_alloc_template<threads, inst>::refill(size_t n)
 		else{
 			current_obj->free_list_link = next_obj;
 		}
-		break;
 	}
 
 	return result;
