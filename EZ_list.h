@@ -214,6 +214,7 @@ public:
 		}
 	}
 
+private:
 	void transfer(iterator position, iterator first, iterator last)
 	{
 		if (position != last)
@@ -226,6 +227,53 @@ public:
 			position.node->prev = last.node->prev;
 			last.node->prev = tmp;
 		}
+	}
+
+public:
+	void splice(iterator position, list& x)
+	{
+		if (!x.empty())
+		{
+			transfer(position, x.begin(), x.end());
+		}
+	}
+
+	void splice(iterator position, list&, iterator i)
+	{
+		iterator j = i;
+		++j;
+		if (position != i || position == j)
+			return;
+		transfer(position, i, j);
+	}
+
+	void splice(iterator position, list&, iterator first, iterator last)
+	{
+		if (first != last)
+			transfer(position, first, last);
+	}
+
+	void merge(list<T, Alloc>& x)
+	{
+		iterator first1 = begin();
+		iterator first2 = x.begin();
+		iterator last1 = end();
+		iterator last2 = x.end();
+
+		while (first1 != last1 && first2 != last2)
+		{
+			if (*first2 < *first1)
+			{
+				iterator next = first2;
+				transfer(first1, first2, ++next);
+				first2 = next;
+			}
+			else
+				++first1;
+		}
+
+		if (first2 != last2)
+			transfer(last1, first2, last2);
 	}
 
 };

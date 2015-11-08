@@ -99,16 +99,30 @@ int main()
 		ilst2.push_back(i);
 	}
 
-	ilst2.transfer(ilst.begin(), ilst.end(), ilst2.begin());
+	ilst2.splice(ilst2.begin(), ilst);
 
 	for (auto n : ilst2)
 	{
 		cout << n << " "; 
 	}
 
-
 	cout << endl;
 	cout << "size of ilst: " << ilst.size() << endl;
+	cout << endl;
+
+	ilst.clear();
+	ilst2.clear();
+
+	for (int i(0); i < 10; i += 2)
+		ilst.push_back(i);
+	for (int i(1); i < 10; i += 2)
+		ilst2.push_back(i);
+
+	ilst.merge(ilst2);
+
+	for (auto n : ilst)
+		cout << n << " ";
+
 	cout << endl;
 
 	system("pause");
