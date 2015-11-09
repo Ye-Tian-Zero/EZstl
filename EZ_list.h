@@ -104,6 +104,7 @@ protected:
 		put_node(p);
 	}
 
+
 	void empty_initialize()
 	{
 		node = get_node();
@@ -134,6 +135,18 @@ public:
 	reference back(){ return *(--end()); }
 
 	list() { empty_initialize(); }
+	~list()
+	{
+		link_type first = begin().node;
+		for (; first != node;)
+		{
+			link_type tmp = first->next;
+			destory_node(first);
+			first = tmp;
+		}
+
+		destory(node);
+	}
 
 	void push_back(const T& x){ insert(end(), x); }
 
@@ -242,7 +255,7 @@ public:
 	{
 		iterator j = i;
 		++j;
-		if (position != i || position == j)
+		if (position == i || position == j)
 			return;
 		transfer(position, i, j);
 	}
@@ -274,6 +287,53 @@ public:
 
 		if (first2 != last2)
 			transfer(last1, first2, last2);
+	}
+
+	void reverse()
+	{
+		iterator first = begin();
+		++first;
+		while (first != end())
+		{
+			iterator tmp = first;
+			++first;
+			transfer(begin(), tmp, first);
+		}
+	}
+
+	void swap(list& x)
+	{
+		link_type tmp = x.node;
+		x.node = this->node;
+		this->node = tmp;
+	}
+
+	void sort()
+	{
+		if (node->next == node || node->next->next == node)
+			return;
+
+		list<T, Alloc> carry;
+		list<T, Alloc> counter[64];
+
+		int fill(0);
+
+		while (!empty())
+		{
+			carry.splice(carry.begin(), *this, begin());
+			int i(0);
+			while (i != fill && !counter[i].empty())
+			{
+				counter[i].merge(carry);
+				carry.swap(counter[i++]);
+			}
+			carry.swap(counter[i]);
+			if (i == fill) ++fill;
+		}
+
+		for (int i = 1; i < fill; ++i)
+			counter[i].merge(counter[i - 1]);
+		swap(counter[fill - 1]);
 	}
 
 };

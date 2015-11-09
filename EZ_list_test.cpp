@@ -123,7 +123,21 @@ int main()
 	for (auto n : ilst)
 		cout << n << " ";
 
-	cout << endl;
+	cout << endl << endl;
+
+	ilst.reverse();
+
+	for (auto n : ilst)
+		cout << n << " ";
+
+	cout << endl << endl;
+
+	ilst.sort();
+
+	for (auto n : ilst)
+		cout << n << " ";
+
+	cout << endl << endl;
 
 	system("pause");
 	return 0;
