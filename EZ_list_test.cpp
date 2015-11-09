@@ -7,6 +7,8 @@ using std::cout;
 using std::endl;
 
 class list_test{
+public:
+	list_test(){ cout << "constructor" << endl; }
 	list_test(const list_test&){ cout << "copy constructor" << endl; }
 	~list_test(){ cout << "destructor" << endl; }
 };
@@ -138,6 +140,14 @@ int main()
 		cout << n << " ";
 
 	cout << endl << endl;
+
+	ilst.clear();
+
+	list<list_test> tlst;
+	list_test z;
+	for (int i(0); i != 7; ++ i)
+		tlst.push_back(z);
+	tlst.clear();
 
 	system("pause");
 	return 0;
