@@ -6,8 +6,7 @@ using std::cout;
 using std::endl;
 int main()
 {
-	std:: vector<int> ivec;
-	std::vector<int>::const_iterator citer = ivec.begin();
+	vector<int> ivec;
 	for (int i = 0; i != 10; ++i)
 	{
 		ivec.push_back(i);
