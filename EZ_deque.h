@@ -212,11 +212,11 @@ public:
 		map = map_allocator::allocate(map_size);
 
 		map_pointer nstart = map + (map_size - num_nodes) / 2;
-		map_pointer nfinish = map + num_nodes - 1;
+		map_pointer nfinish = nstart + num_nodes - 1;
 
 		map_pointer cur;
 
-		for (cur = nstart; cur != nfinish; ++cur)
+		for (cur = nstart; cur <= nfinish; ++cur)
 		{
 			*cur = allocate_node();
 		}
