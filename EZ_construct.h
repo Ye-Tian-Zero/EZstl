@@ -121,36 +121,4 @@ uninitialized_copy(ForwardIterator first, ForwardIterator last, ForwardIterator 
 {
 	return __uninitialized_copy(first, last, result, value_type(result));
 }
-
-template<class ForwardIterator, class T>
-inline void __uninitialized_fill_aux(ForwardIterator first, ForwardIterator last, const T& val, __true_type)
-{
-	for (ForwardIterator cur = first; cur != last; ++cur)
-	{
-		*cur = *val;
-	}
-}
-
-template<class ForwardIterator, class T>
-inline void __uninitialized_fill_aux(ForwardIterator first, ForwardIterator last, const T& val, __false_type)
-{
-	for (ForwardIterator cur = first; cur != last; ++cur)
-	{
-		construct(&*cur, val);
-	}
-}
-
-template<class ForwardIterator, class T, class T1>
-inline void __uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& val, T1)
-{
-	typedef typename __type_traits<T1>::is_POD_type is_POD;
-	__uninitialized_fill_aux(first, last, const T& val, is_POD());
-}
-
-
-template<class ForwardIterator, class T>
-inline void uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& val)
-{
-	__uninitialized_fill(first, last, val, value_type(first));
-}
 #endif
