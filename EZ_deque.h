@@ -26,6 +26,10 @@ struct __deque_iterator{
 	T* last;
 	map_pointer node;
 
+	__deque_iterator(const iterator& i):cur(i.cur), first(i.first), last(i.last), node(i.node) {}
+
+	__deque_iterator() {}
+
 	static inline size_t __deque_buf_size(size_t n, size_t sz)
 	{
 		return n != 0 ? n : (sz < 512 ? size_t(512 / sz) : size_t(1));
@@ -112,15 +116,15 @@ struct __deque_iterator{
 
 	reference operator[](difference_type n){ return *(*this + n); }
 
-	bool operator ==(const self& x){
+	bool operator==(const self& x) const{
 		return cur == x.cur;
 	}
 
-	bool operator !=(const self& x){
+	bool operator!=(const self& x) const{
 		return !(*this == x);
 	}
 
-	bool operator <(const self& x){
+	bool operator <(const self& x) const{
 		return node == x.node ? (cur < x.cur) : (node < x.node);
 	}
 };
@@ -128,13 +132,20 @@ struct __deque_iterator{
 template <class T, class Alloc = alloc, size_t BufSiz = 0>
 class deque{
 public:
+	template<class Ts, class Allocs, size_t BufSizs>
+    friend bool operator== (const deque<Ts, Allocs, BufSizs>& x, const deque<Ts, Allocs, BufSizs>& y);
+
 	typedef T			value_type;
 	typedef T*			pointer;
 	typedef T&			reference;
+	typedef const T*	const_pointer;
+	typedef const T&	const_reference;
 	typedef ptrdiff_t	difference_type;
 	typedef size_t		size_type;
 
 	typedef __deque_iterator<T, T&, T*, BufSiz> iterator;
+	typedef __deque_iterator<T, const T&, const T*, BufSiz> const_iterator;
+
 	typedef simple_alloc<value_type, alloc> data_allocator;
 	typedef simple_alloc<pointer, alloc> map_allocator;
 
@@ -153,12 +164,17 @@ protected:
 
 public:
 
+	bool empty(){ return size() == 0; }
+
 	deque() :start(), finish(), map(0), map_size(0){
 		create_map_and_nodes(0);
 	}
 
 	iterator begin(){ return start; }
 	iterator end(){ return finish; }
+
+	const iterator begin()const { return start; }
+	const iterator end()const { return finish; }
 
 	reference operator[](size_type n){
 		return start[difference_type(n)];
@@ -178,7 +194,7 @@ public:
 
 	size_type max_size() const{ return size_type(-1); }
 
-	bool empty() const{ return finish == start; }
+	bool empty() const { return finish == start; }
 
 	deque(int n, const value_type& value)
 		:start(), finish(), map(0), map_size(0)
@@ -467,6 +483,7 @@ public:
 			pop_front_aux();
 	}
 
+
 private:
 	template<class T>
 	T max(T v1, T v2)
@@ -494,4 +511,16 @@ private:
 	}
 };
 
+template <class T, class Alloc, size_t BufSiz>
+bool operator==(const deque<T, Alloc, BufSiz>& x, const deque<T, Alloc, BufSiz>& y) {
+	if (x.size() != y.size())
+		return false;
+	for (deque<T>::const_iterator x_iter = x.begin(), y_iter = y.begin(); x_iter != x.end(); ++x_iter, ++y_iter)
+	{
+		if (*x_iter != *y_iter)
+			return false;
+	}
+
+	return true;
+}
 #endif

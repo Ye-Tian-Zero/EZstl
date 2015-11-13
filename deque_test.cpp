@@ -6,6 +6,8 @@ using std::endl;
 int main()
 {
 	deque<int> ideq(20, 9);
+	deque<int> ideq2(20, 9);
+	cout << (ideq == ideq2) << endl;
 	cout << "size=" << ideq.size() << endl;
 
 	for (int i(0); i != ideq.size(); ++ i)
