@@ -127,7 +127,7 @@ inline void __uninitialized_fill_aux(ForwardIterator first, ForwardIterator last
 {
 	for (ForwardIterator cur = first; cur != last; ++cur)
 	{
-		*cur = *val;
+		*cur = val;
 	}
 }
 
@@ -144,7 +144,7 @@ template<class ForwardIterator, class T, class T1>
 inline void __uninitialized_fill(ForwardIterator first, ForwardIterator last, const T& val, T1)
 {
 	typedef typename __type_traits<T1>::is_POD_type is_POD;
-	__uninitialized_fill_aux(first, last, const T& val, is_POD());
+	__uninitialized_fill_aux(first, last, val, is_POD());
 }
 
 

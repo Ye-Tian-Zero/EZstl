@@ -81,17 +81,17 @@ struct __deque_iterator{
 	{
 		difference_type offset = n + cur - first;
 
-		if (offset > 0 && offset < difference_type(buffer_size()))
+		if (offset >= 0 && offset < difference_type(buffer_size()))
 		{
 			cur += n;
 		}
 		else
 		{
 			difference_type node_offset = offset > 0 ? offset / difference_type(buffer_size())
-													 : -difference_type((-offset - 1) / buffer_size()) - 1;
+				: -difference_type((-offset - 1) / buffer_size()) - 1;
 
 			set_node(node + node_offset);
-			
+
 			cur = first + (offset - node_offset * difference_type(buffer_size()));
 		}
 
@@ -110,12 +110,12 @@ struct __deque_iterator{
 		return tmp -= n;
 	}
 
-	reference operator[](difference_type n){ return *(*this + n) }
+	reference operator[](difference_type n){ return *(*this + n); }
 
 	bool operator ==(const self& x){
 		return cur == x.cur;
 	}
-	
+
 	bool operator !=(const self& x){
 		return !(*this == x);
 	}
@@ -174,7 +174,7 @@ public:
 		return *tmp;
 	}
 
-	size_type size() const{ return finsh - start; }
+	size_type size() const{ return finish - start; }
 
 	size_type max_size() const{ return size_type(-1); }
 
@@ -199,7 +199,7 @@ public:
 		{
 			uninitialized_fill(*cur, *cur + buffer_size(), value);
 		}
-		
+
 		uninitialized_fill(finish.first, finish.cur, value);
 	}
 
@@ -229,6 +229,21 @@ public:
 	}
 
 protected:
+
+	void pop_back_aux(){
+		deallocate_node(finish.first);
+		finish.set_node(finish.node - 1);
+		finish.cur = finish.last - 1;
+		destory(finish.cur);
+	}
+
+	void pop_front_aux(){
+		destory(start.cur);
+		deallocate_node(start.first);
+		start.set_node(start.node + 1);
+		start.cur = start.first;
+	}
+
 	pointer allocate_node(){ return data_allocator::allocate(buffer_size()); }
 
 	void deallocate_node(pointer p){ data_allocator::deallocate(p, buffer_size()); }
@@ -246,7 +261,7 @@ protected:
 		value_type t_copy = t;
 		reserve_map_at_front();
 		*(start.node - 1) = allocate_node();
-		start.set_node(start.node + 1);
+		start.set_node(start.node - 1);
 		start.cur = start.last - 1;
 		construct(start.cur, t_copy);
 	}
@@ -291,6 +306,130 @@ protected:
 	}
 
 public:
+
+	void clear(){
+		for (map_pointer node = start.node + 1; node < finish.node; ++node)
+		{
+			destory(*node, *node + buffer_size());
+			data_allocator::deallocate(*node, *node + buffer_size());
+		}
+
+		if (start.node != finish.node)
+		{
+			destory(start.cur, start.finish);
+			destory(finish.first, finish.cur);
+
+			data_allocator::deallocate(finish.first, buffer_size());
+		}
+		else
+			destory(start.cur, finish.cur);
+
+		finish = start;
+
+	}
+
+	iterator erase(iterator pos)
+	{
+		iterator next = pos;
+		++next;
+
+		difference_type index = pos - start;
+
+		if (index < (size() >> 1))
+		{
+			copy_backward_tmp(start, pos, next);
+			pop_front;
+		}
+		else
+		{
+			copy_tmp(next, finish, pos);
+			pop_back();
+		}
+
+		return start + index;
+
+	}
+
+	iterator erase(iterator first, iterator last)
+	{
+		if (first == start && last == finish)
+		{
+			clear();
+			return finish;
+		}
+		else
+		{
+			difference_type n = last - first;
+			difference_type elems_before = first - start;
+			if (elems_before < (size() - n) / 2) {
+				copy_backward(start, first, last);
+				iterator new_start = start + n;
+				destroy(start, new_start);
+				for (map_pointer cur = start.node; cur < new_start.node; ++cur)
+					data_allocator::deallocate(*cur, buffer_size());
+				start = new_start;
+			}
+			else {
+				copy(last, finish, first);
+				iterator new_finish = finish - n;
+				destroy(new_finish, finish);
+				for (map_pointer cur = new_finish.node + 1; cur <= finish.node; ++cur)
+					data_allocator::deallocate(*cur, buffer_size());
+				finish = new_finish;
+			}
+
+			return start + elems_before;
+		}
+	}
+
+	iterator insert(iterator position, const value_type& x)
+	{
+		if (position.cur == start.cur) {
+			push_front(x);
+			return start;
+		}
+		else if (position.cur == finish.cur) {
+			push_back(x);
+			iterator tmp = finish;
+			--tmp;
+			return tmp;
+		}
+		else {
+			return insert_aux(position, x);
+		}
+	}
+
+
+	iterator insert_aux(iterator pos, const value_type& x) 
+	{
+		difference_type index = pos - start;
+		value_type x_copy = x;
+		if (index < size() / 2) {
+			push_front(front());
+			iterator front1 = start;
+			++front1;
+			iterator front2 = front1;
+			++front2;
+			pos = start + index;
+			iterator pos1 = pos;
+			++pos1;
+			copy(front2, pos1, front1);
+		}
+
+		else {
+			push_back(back());
+			iterator back1 = finish;
+			--back1;
+			iterator back2 = back1;
+			--back2;
+			pos = start + index;
+			copy_backward(pos, back2, back1);
+		}
+
+		*pos = x_copy;
+		return pos;
+	}
+
 	void push_back(const value_type& t){
 		if (finish.cur != finish.last - 1){
 			construct(finish.cur, t);
@@ -309,13 +448,32 @@ public:
 		else
 			push_front_aux(t);
 	}
+
+	void pop_back(){
+		if (finish.cur != finish.first){
+			--finish.cur;
+			destory(finish.cur);
+		}
+		else
+			pop_back_aux();
+	}
+
+	void pop_front(){
+		if (start.cur != start.last - 1){
+			destory(start.cur);
+			++start.cur;
+		}
+		else
+			pop_front_aux();
+	}
+
 private:
 	template<class T>
 	T max(T v1, T v2)
 	{
 		return v1 >= v2 ? v1 : v2;
 	}
-	
+
 	template<class ForwardIterator>
 	inline ForwardIterator copy_tmp(ForwardIterator first, ForwardIterator last, ForwardIterator result)
 	{
