@@ -78,6 +78,8 @@ public:
 	typedef T				value_type;
 	typedef T*				pointer;
 	typedef T&				reference;
+	typedef const T&		const_reference;
+	typedef const T*		const_pointer;
 	typedef ptrdiff_t		difference_type;
 	typedef size_t			size_type;
 

@@ -1,4 +1,5 @@
 #include"EZ_stack.h"
+#include"EZ_list.h"
 #include<string>
 #include<iostream>
 using std::string;
@@ -7,7 +8,8 @@ using std::cout;
 using std::endl;
 int main()
 {
-	stack<int> istk;
+
+	stack<int, list<int>> istk;
 	bool leagal = true;
 	string s;
 	cin >> s;
@@ -32,11 +34,11 @@ int main()
 	{
 		cout << "error" << endl; 
 	}
-
 	else
 	{
 		cout << "right" << endl;
 	}
+
 	system("pause");
 	return 0;
 }

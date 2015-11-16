@@ -1,12 +1,16 @@
 //#define DEBUG
+#include"EZ_stack.h"
+#include"EZ_list.h"
 #include"EZ_vector.h"
-#include<vector>
 #include <iostream>
+#include<string>
+using std::string;
+using std::cin;
 using std::cout;
 using std::endl;
 int main()
 {
-	vector<int> ivec;
+	vector<int> ivec(10,10);
 	for (int i = 0; i != 10; ++i)
 	{
 		ivec.push_back(i);

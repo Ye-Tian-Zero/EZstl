@@ -3,6 +3,7 @@
 
 #include"EZ_simple_alloc.h"
 #include"EZ_construct.h"
+#include"EZ_iterator.h"
 
 #include<cstddef>
 
@@ -25,6 +26,8 @@ public:
 	typedef T*			iterator;
 	typedef size_t		size_type;
 	typedef ptrdiff_t	difference_type;
+	typedef const T*	const_pointer;
+	typedef const T&	const_reference;
 
 protected:
 	typedef simple_alloc<value_type, alloc> data_allocator;
@@ -136,7 +139,7 @@ protected:
 	{
 		iterator result = data_allocator::allocate(n);
 		uninitialized_fill_n(result, n, x);
-		return iterator;
+		return result;
 	}
 };
 

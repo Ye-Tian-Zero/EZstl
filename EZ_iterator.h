@@ -26,11 +26,11 @@ struct iterator_traits{
 };
 
 template <class T>
-struct iterator_traits < T* > {
+struct iterator_traits<T*> {
 	typedef T							value_type;
 	typedef T&							reference;
 	typedef T*							pointer;
-	typedef ptrdiff_t					diff_type;
+	typedef ptrdiff_t					difference_type;
 	typedef random_access_iterator_tag	iterator_category;
 };
 
@@ -39,7 +39,7 @@ struct iterator_traits < const T* > {
 	typedef T							value_type;
 	typedef const T&					reference;
 	typedef const T*					pointer;
-	typedef ptrdiff_t					diff_type;
+	typedef ptrdiff_t					difference_type;
 	typedef random_access_iterator_tag	iterator_category;
 };
 
@@ -58,7 +58,7 @@ inline typename iterator_traits<Iterator>::value_type* value_type(const Iterator
 template <class input_iterator>
 inline typename iterator_traits<input_iterator>::difference_type* distance_type(const input_iterator&)
 {
-	return static_cast<typename iterator_traits<Iterator>::difference_type*>(0);
+	return static_cast< typename iterator_traits<input_iterator>::difference_type* >(0);
 }
 
 template <class InputIterator>
