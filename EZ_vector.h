@@ -75,6 +75,7 @@ public:
 	}
 
 	reference front(){ return *start; }
+	const_reference front() const{ return *start; }
 	reference back(){ return *(finish - 1); }
 
 	void push_back(const T& v)

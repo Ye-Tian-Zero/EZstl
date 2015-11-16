@@ -31,6 +31,21 @@ int main()
 	}
 	cout << endl;
 
+	priority_queue<int> ipq;
+	for (int i = 0; i != 100; ++ i)
+		ipq.push(i);
+	cout << "size:" << ipq.size() << endl;
+
+	for (int i = 0; i < ipq.size(); ++i)
+		cout << ipq.top() << ' ';
+	cout << endl;
+
+	while (ipq.size()){
+		cout << ipq.top() << ' ';
+		ipq.pop();
+	}
+	cout << endl;
+
 	system("pause");
 	return 0;
 }
