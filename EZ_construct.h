@@ -63,14 +63,14 @@ inline ForwardIterator __uninitialized_fill_n_aux(ForwardIterator first, Size n,
 {
 	while (n--)
 	{
-		construct(&(*fisrt), x);
+		construct(&(*first), x);
 		first++;
 	}
 	return first;
 }
 
 template<class ForwardIterator, class Size, class T, class T1>
-inline ForwardIterator __uninitialized_fill_n(ForwardIterator first, Size n, const T& x, T1)
+inline ForwardIterator __uninitialized_fill_n(ForwardIterator first, Size n, const T& x, T1*)
 {
 	typedef typename __type_traits<T1>::is_POD_type is_POD;
 	return __uninitialized_fill_n_aux(first, n, x, is_POD());

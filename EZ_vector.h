@@ -139,7 +139,7 @@ protected:
 	iterator allocate_and_fill(size_type n, const T& x)
 	{
 		iterator result = data_allocator::allocate(n);
-		uninitialized_fill_n(result, n, x);
+		::uninitialized_fill_n(result, n, x);
 		return result;
 	}
 };
