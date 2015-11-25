@@ -4,6 +4,7 @@
 #include"EZ_iterator.h"
 #include"EZ_pair_structure.h"
 #include"__EZ_copy.h"
+#include"EZ_heap.h"
 #include<cstring>
 
 template <class InputIterator1, class InputIterator2>
@@ -763,9 +764,9 @@ ForwardIterator __lower_bound(ForwardIterator first, ForwardIterator last, const
 }
 
 template<class RandomAccessIterator, class T, class Distance>
-ForwardIterator __lower_bound(RandomAccessIterator first, RandomAccessIterator last, const T& value, Distance*, random_access_iterator_tag)
+RandomAccessIterator __lower_bound(RandomAccessIterator first, RandomAccessIterator last, const T& value, Distance*, random_access_iterator_tag)
 {
-	Distance len = lasf - first;
+	Distance len = last - first;
 	Distance half;
 	RandomAccessIterator middle;
 
@@ -810,11 +811,11 @@ ForwardIterator __upper_bound(ForwardIterator first, ForwardIterator last, const
 	return first;
 }
 
-template<class ForwardIterator, class T, class Distance>
-ForwardIterator __upper_bound(ForwardIterator first, ForwardIterator last, const T& value, Distance*, random_access_iterator_tag){
+template<class RandomAccessIterator, class T, class Distance>
+RandomAccessIterator __upper_bound(RandomAccessIterator first, RandomAccessIterator last, const T& value, Distance*, random_access_iterator_tag){
 	Distance len = last - first;
 	Distance half;
-	ForwardIterator middle;
+	RandomAccessIterator middle;
 
 	while (len > 0)
 	{
@@ -831,7 +832,207 @@ ForwardIterator __upper_bound(ForwardIterator first, ForwardIterator last, const
 }
 
 template<class ForwardIterator, class T>
-inline ForwardIterator upper_bound(ForwardIterator first, ForwardIterator last, const t & value){
+inline ForwardIterator upper_bound(ForwardIterator first, ForwardIterator last, const T& value){
 	return __upper_bound(first, last, value, distance_type(first), iterator_category(first));
 }
+
+template <class ForwardIterator, class T>
+bool binary_search(ForwardIterator first, ForwardIterator last, const T& value){
+	ForwardIterator i = lower_bound(first, last, value);
+	if (*i == value && i != last)
+		return true;
+	return false;
+}
+
+template<class BidirectionalIterator>
+bool next_permutation(BidirectionalIterator first, BidirectionalIterator last){
+	if (first == last) return false;
+	BidirectionalIterator i = first;
+	++i;
+	if (i == last) return false;
+	i = last;
+	--i;
+
+	for (;;)
+	{
+		BidirectionalIterator ii = i;
+		--i;
+		if (*i < *ii){
+			BidirectionalIterator j = last;
+			while (!(*i < *--j));
+			iter_swap(i, j);
+			reverse(ii, last);
+			return true;
+		}
+		if (i == first){
+			reverse(first, last);
+			return false;
+		}
+	}
+}
+
+template<class BidirectionalIterator>
+bool prev_permutation(BidirectionalIterator first, BidirectionalIterator last){
+	if (first == last) return false;
+	BidirectionalIterator i = first;
+	++i;
+	if (i == last) return false;
+	i = last;
+	--i;
+
+	for (;;)
+	{
+		BidirectionalIterator ii = i;
+		--i;
+		if (*ii < *i){
+			BidirectionalIterator j = last;
+			while (!(*--j < *i));
+			iter_swap(i, j);
+			reverse(ii, last);
+			return true;
+		}
+		if (i == first){
+			reverse(first, last);
+			return false;
+		}
+	}
+}
+
+template<class RandomAccessIterator>
+inline void partial_sort(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last){
+	__partial_sort(first, middle, last, value_type(first));
+}
+
+template<class RandomAccessIterator, class T>
+void __partial_sort(RandomAccessIterator first, RandomAccessIterator middle, RandomAccessIterator last, T*){
+	make_heap(first, middle);
+	for (RandomAccessIterator i = middle; i < last; ++i)
+		if (*i < *first)
+			__pop_heap(first, middle, i, T(*i), distance_type(first));
+	sort_heap(first, middle);
+}
+
+template<class RandomAccessIterator, class T>
+void __unguarded_linear_insert(RandomAccessIterator last, T value){
+	RandomAccessIterator next = last;
+	--next;
+	while (value < *next){
+		*last = *next;
+		last = next;
+		--next;
+	}
+	*last = value;
+}
+
+template<class ForwardIterator>
+inline void __copy_backward(ForwardIterator src_end, ForwardIterator src_start, ForwardIterator dst)
+{
+	if (src_end == src_start)
+		return;
+	while (src_end != --src_start)
+	{
+		*(--dst) = *src_start;
+	}
+}
+
+template<class RandomAccessIterator, class T>
+inline void __linear_insert(RandomAccessIterator first, RandomAccessIterator last, T*){
+	T value = *last;
+	if (value < *first){
+		__copy_backward(first, last, last + 1);
+		*first = value;
+	}
+	else
+		__unguarded_linear_insert(last, value);
+}
+
+template<class RandomAccessIterator>
+void __insertion_sort(RandomAccessIterator first, RandomAccessIterator last)
+{
+	if (first == last) return;
+	for (RandomAccessIterator i = first + 1; i != last; ++i)
+		__linear_insert(first, i, value_type(first));
+}
+
+template<class T>
+inline const T& __median(const T& a, const T& b, const T& c){
+	if (a < b)
+		if (b < c)
+			return b;
+		else if (a < c)
+			return c;
+		else
+			return a;
+	else if (a < c)
+		return a;
+	else if (b < c)
+		return c;
+	else
+		return b;
+}
+
+template<class RandomAccessIterator, class T>
+RandomAccessIterator __unguarded_partition(RandomAccessIterator first, RandomAccessIterator last, T pivot)
+{
+	while (true){
+		while (*first < pivot) ++first;
+		--last;
+		while (pivot < *last) --last;
+		if (!(first < last)) return first;
+		iter_swap(first, last);
+		++first;
+	}
+}
+
+template<class Size>
+inline Size __lg(Size n){
+	Size k;
+	for (k = 0; n > 1; n >>= 1)++k;
+	return k;
+}
+
+template<class RandomAccessIterator, class T, class Size>
+void __introsort_loop(RandomAccessIterator first, RandomAccessIterator last, T*, Size depth_limit)
+{
+	while (last - first > 16){
+		if (depth_limit == 0){
+			partial_sort(first, last, last);
+			return;
+		}
+		--depth_limit;
+		RandomAccessIterator cut = __unguarded_partition(first, last, T(__median(*first, *(first + (last - first) / 2), *(last - 1))));
+		__introsort_loop(cut, last, value_type(first), depth_limit);
+		last = cut;//It's not so good, I like '__introsort_loop(first, cut, value_type(first), depth_limit);'
+	}
+}
+
+template<class RandomAccessIterator>
+inline void __unguarded_insertion_sort(RandomAccessIterator first, RandomAccessIterator last){
+	__unguarded_insertion_sort_aux(first, last, value_type(first));
+}
+
+template<class RandomAccessIterator , class T>
+void __unguarded_insertion_sort_aux(RandomAccessIterator first, RandomAccessIterator last, T*){
+	for (RandomAccessIterator i = first; i != last; ++i)
+		__unguarded_linear_insert(i, T(*i));
+}
+
+template<class RandomAccessIterator>
+void __final_insertion_sort(RandomAccessIterator first, RandomAccessIterator last){
+	if (last - first > 16){
+		__insertion_sort(first, first + 16);
+		__unguarded_insertion_sort(first + 16, last);
+	}
+	else
+		__insertion_sort(first, last);
+}
+
+template<class RandomAccessIterator>
+inline void sort(RandomAccessIterator first, RandomAccessIterator last){
+	if (first != last){
+		__introsort_loop(first, last, value_type(first), __lg(last - first) * 2);
+		__final_insertion_sort(first, last);
+	}
+}
+
 #endif

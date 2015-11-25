@@ -504,7 +504,9 @@ private:
 	template<class ForwardIterator>
 	inline void copy_backward_tmp(ForwardIterator src_end, ForwardIterator src_start, ForwardIterator dst)
 	{
-		while (--src_start >= src_end)
+		if (src_end == src_start)
+			return;
+		while (src_end != --src_start)
 		{
 			*(--dst) = *src_start;
 		}

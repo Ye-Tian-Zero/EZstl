@@ -4,6 +4,8 @@
 #include"EZ_vector.h"
 #include"EZ_deque.h"
 #include"EZ_list.h"
+#include<fstream>
+std::wfstream a;
 
 using std::cout;
 using std::endl;
