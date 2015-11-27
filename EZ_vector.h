@@ -28,6 +28,7 @@ public:
 	typedef ptrdiff_t	difference_type;
 	typedef const T*	const_pointer;
 	typedef const T&	const_reference;
+	typedef reverse_iterator<iterator>			reverse_iterator;
 
 protected:
 	typedef simple_alloc<value_type, alloc> data_allocator;
@@ -56,6 +57,8 @@ public:
 
 	iterator begin(){ return start; }
 	iterator end(){ return finish; }
+	reverse_iterator rbegin(){ return reverse_iterator(end()); }
+	reverse_iterator rend(){ return reverse_iterator(begin()); }
 
 	size_type size() const { return size_type(finish - start); }
 	size_type capacity() const { return size_type(end_of_storage - start); }

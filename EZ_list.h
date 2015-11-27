@@ -82,6 +82,7 @@ public:
 	typedef const T*		const_pointer;
 	typedef ptrdiff_t		difference_type;
 	typedef size_t			size_type;
+	typedef reverse_iterator<iterator>			reverse_iterator;
 
 protected:
 
@@ -118,6 +119,9 @@ public:
 
 	iterator begin(){ return node->next; }
 	iterator end(){ return node; }
+
+	reverse_iterator rbegin(){ return reverse_iterator(end()); }
+	reverse_iterator rend(){ return reverse_iterator(begin()); }
 
 	bool empty() const{ return node->next == node; }
 

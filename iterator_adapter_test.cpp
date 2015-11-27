@@ -1,5 +1,6 @@
 #include"EZ_vector.h"
 #include"EZ_iterator.h"
+#include"EZ_algorithm.h"	
 #include"EZ_list.h"
 #include<iostream>
 
@@ -52,6 +53,16 @@ int main()
 		cout << n << ' ';
 	}
 	cout << endl;
+
+	ivec.clear();
+	ivec.resize(ilst.size());
+	copy(ilst.begin(), ilst.end(), ivec.rbegin());
+	for (auto n : ivec)
+	{
+		cout << n << ' ';
+	}
+	cout << endl;
+
 	system("pause");
 	return 0;
 }

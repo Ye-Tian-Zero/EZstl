@@ -144,6 +144,7 @@ public:
 	typedef size_t		size_type;
 
 	typedef __deque_iterator<T, T&, T*, BufSiz> iterator;
+	typedef reverse_iterator<iterator>			reverse_iterator;
 	typedef __deque_iterator<T, const T&, const T*, BufSiz> const_iterator;
 
 	typedef simple_alloc<value_type, alloc> data_allocator;
@@ -172,6 +173,9 @@ public:
 
 	iterator begin(){ return start; }
 	iterator end(){ return finish; }
+
+	reverse_iterator rbegin(){ return reverse_iterator(finish); }
+	reverse_iterator rend(){ return reverse_iterator(start); }
 
 	const iterator begin()const { return start; }
 	const iterator end()const { return finish; }

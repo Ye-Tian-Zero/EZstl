@@ -49,7 +49,7 @@ inline OutputIterator __copy(InputIterator first, InputIterator last, OutputIter
 #endif
 	for (; first != last; ++first, ++result)
 		 *result = *first;
-	return first;
+	return result;
 }
 
 template<class RandomAccessIterator, class OutputIterator>
