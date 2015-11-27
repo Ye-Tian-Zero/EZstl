@@ -1,6 +1,7 @@
 #include"EZ_algorithm.h"
 #include"EZ_vector.h"
 #include<iostream>
+#include<functional>
 using std::cout;
 using std::endl;
 #define display(x) for(auto n:x){cout << n << ' ';}cout<<endl;

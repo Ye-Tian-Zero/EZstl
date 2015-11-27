@@ -118,4 +118,97 @@ inline void advance(InputIterator& i, Distance n)
 {
 	__advance(i, n, iterator_category(i));
 }
+
+template<class Container>
+class front_insert_iterator{
+protected:
+	Container* container;
+public:
+	typedef output_iterator_tag iterator_category;
+	typedef void				volue_type;
+	typedef void				difference_type;
+	typedef void				pointer;
+	typedef void				refference;
+
+	explicit front_insert_iterator(Container& x) :container(&x){}
+
+	front_insert_iterator<Container>& operator=(const typename Container::value_type& value){
+		container->push_front(value);
+		return *this;
+	}
+
+	front_insert_iterator<Container>& operator*(){ return *this; }
+	front_insert_iterator<Container>& operator++(){ return *this; }
+	front_insert_iterator<Container>& operator++(int){ return *this; }
+
+};
+
+template<class Container>
+inline front_insert_iterator<Container> front_insert(Container& x){
+	return front_insert_iterator<Container>(x);
+}
+
+template<class Container>
+class back_insert_iterator{
+protected:
+	Container* container;
+public:
+	typedef output_iterator_tag iterator_category;
+	typedef void				volue_type;
+	typedef void				difference_type;
+	typedef void				pointer;
+	typedef void				refference;
+
+	explicit back_insert_iterator(Container& x) :container(&x){}
+
+	back_insert_iterator<Container>& operator=(const typename Container::value_type& value){
+		container->push_back(value);
+		return *this;
+	}
+
+	back_insert_iterator<Container>& operator*(){ return *this; }
+	back_insert_iterator<Container>& operator++(){ return *this; }
+	back_insert_iterator<Container>& operator++(int){ return *this; }
+
+};
+
+template<class Container>
+inline back_insert_iterator<Container> back_insert(Container& x){
+	return back_insert_iterator<Container>(x);
+}
+
+template<class Container>
+class insert_iterator{
+protected:
+	Container* container;
+	typename Container::iterator iter;
+public:
+	typedef output_iterator_tag iterator_category;
+	typedef void				volue_type;
+	typedef void				difference_type;
+	typedef void				pointer;
+	typedef void				refference;
+
+	insert_iterator(Container& x, typename Container::iterator i) :container(&x), iter(i){}
+
+	insert_iterator<Container>& operator=(const typename Container::value_type& value){
+		iter = container->insert(iter, value);
+		++iter;
+		return *this;
+	}
+
+	explicit insert_iterator(Container& x) :container(&x){}
+
+	insert_iterator<Container>& operator*(){ return *this; }
+	insert_iterator<Container>& operator++(){ return *this; }
+	insert_iterator<Container>& operator++(int){ return *this; }
+
+};
+
+template<class Container, class Iterator>
+inline insert_iterator<Container> inserter(Container& x, Iterator i){
+	typedef typename Container::iterator iter;
+	return insert_iterator<Container>(x, iter(i));
+}
+
 #endif
